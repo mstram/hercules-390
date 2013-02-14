@@ -7,7 +7,7 @@ NOTE the changes in the Address HERCULES invocation
 
 This is a full rewrite of the original Rexx implementation by Jan Jaeger
 
-the Rexx packages supported are
+The Rexx packages supported are :
 
 Open Object Rexx ( from now on called simply ooRexx )
 
@@ -16,12 +16,12 @@ Regina Rexx ( from now on called simply Regina  )
 
                     Building Hercules with Rexx support
 
-The support is completely dynamic, only the headers are needed to provide Rexx support
+The support is completely dynamic, only the headers are needed to provide Rexx support.
 
-if the headers rexx.h and oorexxapi.h are found ooRexx support will be included
-if the headers rexxsaa.h is found Regina support will be included
+If the headers rexx.h and oorexxapi.h are found ooRexx support will be included.
+If the headers rexxsaa.h is found Regina support will be included.
 
-if Rexx support is not <needed/wanted> configure supports the flags
+If Rexx support is not <needed/wanted> configure supports the flags :
 --disable-object-rexx
 --disable-regina-rexx
 
@@ -31,174 +31,191 @@ if Rexx support is not <needed/wanted> configure supports the flags
 Since the support is completely dynamic the available rexx interpreters will be
 determined at run time ( trying to load the appropriate dynamic libraries )
 
-unless specified otherwise ( see further down the available options )
-the rexx initialization stub will check in the order ooRexx and Regina
+Unless specified otherwise ( see further down the available options ),
+the rexx initialization stub will check in the order ooRexx and Regina.
 
-so in case both interpreters are available ooRexx will be the first choice.
+So in case both interpreters are available ooRexx will be the first choice.
 
-no action is required by the user,
-all will be automatic at the first execution of a rexx script
+No action is required by the user,
+all will be automatic at the first execution of a rexx script.
 
-to invoke a rexx script the command is
+To invoke a rexx script the command is:
 
 EXEC <scriptname> <script arguments>
 
-within the Rexx script Hercules commands can be issued using the constructs
+Within the Rexx script Hercules commands can be issued using the constructs:
 
 1 - ...Address <ENVIRONMENT> interface
-* the original implementation was forced to do parsing/subparsing
+* The original implementation was forced to do parsing/subparsing
 of the <string> passed to extract the <command> options
 
-since the <command string> might/ contain arbitrary char sequences
-the subparsing was prone to errors
+Since the <command string> might/ contain arbitrary char sequences
+the subparsing was prone to errors.
 
-now  Address Hercules has as the ONLY parameter the command
-all the <local> option are defined/passed thru predefined and reserved rexx variables
+Now  Address Hercules has as the ONLY parameter the command.
+
+All the <local> options are defined/passed thru predefined and reserved rexx variables
 ( even IBM used this approach in the original RXSQL interface :-) )
 
-and here they are
+And here they are:
 
 HREXX.ERRORHANDER "RETCODE"/"SYSTEM"
-to determine how error situations must be handled
-( usually a non 0 return code from the command )
+To determine how error situations must be handled
+( Usually a non 0 return code from the command )
 
-for example a devlist with no devices present exits with a return code 1
-from the subcommand interface point of view it should not be considered an error
+For example a devlist with no devices present exits with a return code 1.
+
+From the subcommand interface point of view it should not be considered an error
 ( also RXSQL when no rows satify the query does not raise an error condition )
 
-just play around a bit with the different situations to understand better the reason
-why I let the user choose
+Just play around a bit with the different situations to understand better the reason
+why I let the user choose.
 
 HREXX.RESPSTEMNAME
-to tell the stem <root> to be used for the response
+To tell the stem <root> to be used for the response.
 
-the variable is dropped at every call so that each Address HERCULES invocation
-will find an unbiased environment
+The variable is dropped at every call so that each Address HERCULES invocation
+will find an unbiased environment.
 
-if on the other side a response is alway wanted the variable
-HREXX.PERSISTENTRESPSTEMNAME will provide such facility
+If on the other hand, a response is alway wanted the variable:
+HREXX.PERSISTENTRESPSTEMNAME will provide such facility.
 
 
-as usual the Rexx variable RC contains the return code from the hercules command
+As usual the Rexx variable RC contains the return code from the hercules command.
 
-the <stemname> will contain the reply with the usual convention that
-<stemname>.0 will contain the number of lines returned
+The <stemname> will contain the reply with the usual convention that
+<stemname>.0 will contain the number of lines returned.
 
 NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW
-2 - external function interface ( much cleaner IMO )
-the parameter passing does nor depend on any parsing/subparsing
 
-the function name is awscmd
+2 - External function interface ( much cleaner IMO )
+The parameter passing does nor depend on any parsing/subparsing.
+
+The function name is awscmd.
 ( I liked the name, but if somebody feels that it infringes some IP I will change it )
 
-the format and the parameters are
+The format and the parameters are:
 
 <rc> = awscmd(<command>,[<stemname>],[<error handling mode>])
 or
 call awscmd <command>, [<stemname>], [<error handling mode>]
 
-
-in both cases ( command and external function )
+In both cases ( command and external function )
 the error handling default is "RETCODE"
 
 NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
 
 When a response stemname is not specified, Hercules will display the command
 results normally, just like it always does.
+
 When a response stemname is used however, Hercules does NOT display the results
 of the command.
+
 Instead, the results of the command are captured and returned in the specified
 REXX stem variable, and it is Your prerogative to preocess in any way You feel
 appropriate... ( for example )
 
-display them yourself using the REXX 'say/lineout' statement."
-write them to a file using lineout ( for ooRexx EXECIO or the stream class )
-analyze the content to process accordingly
+Display them yourself using the REXX 'say/lineout' statement."
+
+Write them to a file using lineout ( for ooRexx EXECIO or the stream class )
+analyze the content to process accordingly.
 
 
-to manage the Rexx environment the command is
+To manage the Rexx environment the command is:
 
 REXX <option> <arguments>
 
-the option are
+The option are:
 
--- to define the search path for the Rexx script invoked
+1) --- Rexx Path ---
+
+To define the search path for the Rexx script invoked:
 
 PATH a path with the system defined PATH separator
     ( ; for windows / : for linux and similar )
-well no need to tell about it
 
 PATH clear
-to clear the path
+To clear the path.
 
 PATH reset
-to reset the PATH to the default startup path ( see later for the meaning )
+To reset the PATH to the default startup path ( see later for the meaning ).
 
-as an alternate spelling for those who might be confused REXXPATH is also accepted
+As an alternate spelling for those who might be confused REXXPATH is also accepted.
 
 SYSP[ATH] on/off
-to extend the search to the standard system PATH used for executables
+To extend the search to the standard system PATH used for executables.
 
-the above behavior mimicks the ooRexx behavior for the search of external
+The above behavior mimicks the ooRexx behavior for the search of external
 function/classes ( ::library ::requires directives)
 
-the default is to extend the search
+The default is to extend the search.
 
--- to define the extensions to be used when resolving the script name
+2) ---  Script Extensions ---
 
-EXT[ENSIONS] list of the extension to use when autocompleting the script name
+To define the extensions to be used when resolving the script name:
+
+EXT[ENSIONS] List of  extension(s) to use when autocompleting the script name
 
 EXT[ENSIONS] reset
-to reset the EXTENSIONS list to the default startup list ( see later for the meaning )
+To reset the EXTENSIONS list to the default startup list ( see later for the meaning ).
 
-the default extension are
+The default extension are :
 (NONE) the plain file name ==> always checked
 .REXX:.rexx:.REX:.rex:.CMD:.cmd:.RX:.rx
 
-if a script name contains a (.) ==> is in the format <filename>.<filetype>
-it is used as is without any further processing
+If a script name contains a (.) ==> is in the format <filename>.<filetype>
+it is used as is without any further processing.
 
-note the alias of SUF[FIXES] can be used
+Note the alias of SUF[FIXES] can be used.
 
--- control the script name resolution process
+3)--  Script Name Resolutoin --
+To control the script name resolution process
 
 RESOL[VER] on/off
-defines who will resolve the script name
-on  the hercules rexx interface will take care of that and issue the appropriate
-    message if the process fail
-off the command name will be passed AS IS to the rexx interpreter
+Defines how the script name is resolved.
 
-the behavior is different from ooRexx and Regina
+on -  The hercules rexx interface will attempt to resolve the script name and issue the appropriate
+      message if the process fails.
 
-for ooRexx
+off The command name will be passed AS IS to the rexx interpreter.
+
+The name resolution behavior differs in ooRexx and Regina: 
+
+For ooRexx:
+
 HHC01603I exec notfound
 REX0003E: Error 3:  Failure during initialization
 REX0534E: Error 3.901:  Failure during initialization: Program "notfound" was not found
 HHC17502E REXX(ooRexx) ooRexx RC(-3)
-for Regina
-HHC01603I exec notfound
+
+For Regina:
+HHC01603I Exec not found
 HHC17502E REXX(Regina) Regina RC(-3)
 
--- control the verbosity of the interface
+4) -- Interface Verbosity  --
 
 MSGL[EVEL] 0-9
 
-0 is the default
+0 - Default
 
-as far as now any value between 1 and 9 will have the same effect
-it will display at the end of the script the messages
+Currently any value between 1 and 9 will have the same effect.
+
+It will display at the end of the script the messages :
+
 HHC17503I REXX(<package name>) Exec/Script '<script name>' RetRC(0)
 HHC17504I REXX(<package name>) Exec/Script '<script name>' RetValue'0'
 
 
--- define a prefix to be used for standard and error/trace messages
+5)--  Define standard and error/trace message prefix
 
-MSGP[REFIX] a <string>  up to 9 chars ( no blanks allowed ) / reset
+MSGP[REFIX] A <string>  up to 9 chars ( no blanks allowed ) / reset
 ERRP[REFIX]
 
--- define the argument passing mode to the invoked script
-see the hbasics example in the script directory
-and read the rexx documentation - no reason to retype the manuals :-)
+6) -- Define the argument passing mode to the invoked script
+
+See the hbasics example in the script directory.
+
+Argument passing modes and read the rexx documentation - no reason to retype the manuals :-)
 
 MODE    com[mand]
         sub[routine] ( support arg() construct )
@@ -206,12 +223,12 @@ MODE    com[mand]
 I guess that no further details are needed
 
 
-for each command issued at the end a status of the rexx interface is displayed
+For each command issued at the end a status of the rexx interface is displayed
 the same info as in
 
 -- displaying the status of the rexx interface
 
-the command REXX without any operands will display the status of the interface
+The command REXX without any operands will display the status of the interface
 
 HHC01603I rexx
 HHC17500I REXX(ooRexx) Rexx Path : /hercules/scripts
@@ -237,7 +254,7 @@ HHC17500I REXX(Regina) Mode      : (Command)
 HHC17500I REXX(Regina) REXX-Regina_3.6(MT) 5.00 31 Dec 2011
 HHC17500I REXX(Regina) UNIX FUNCTION Instore
 
-or when no interface is enabled
+Or when no interface is enabled
 
 HHC01603I rexx
 HHC17500I REXX() Rexx Path : /hercules/scripts
@@ -251,7 +268,7 @@ HHC17500I REXX() Mode      : (Command)
 HHC17521I REXX() Support not started/enabled
 
 
-since the builtin support is bilingual two other commands are provided
+Since the builtin support is bilingual two other commands are provided
 to manage the Rexx interface
 
 REXX stop/disable
@@ -262,41 +279,41 @@ and as expected specifyng oorexx/regina will override the default
 NOTE the start/stop command are not available if hercules has been built with just
 one package available
 
-environment variables and defaults
+ === Environment variables and defaults  ==
 
-the defaults are those hardcoded in the <code>
-
-some environment variables are provided to override them
+Environment variables are provided to override the defaults:
 
 HREXX_PACKAGE=<value>
-acceptedvalues are
-AUTO, not really needed, but implements the default search order for interpreters
-NONE no default rexx interpreter will be autostarted, a manual start is needed
-oorexx/regina self explanatory
+
+Accepted values are :
+
+AUTO  - Not really needed, but implements the default search order for interpreters
+
+NONE  - No default rexx interpreter will be autostarted, a manual start is needed
+oorexx/regina self explanatory.
 
 
 HREXX_PATH[S]=<a well formed path concatenation>
-wher to find the rexx scripts
+
+Where to find the rexx scripts
 
 HREXX_EXTENSIONS=<a  well formed extensions list >
 
 HREXX_MODE=command/subroutine
 
-when issuing a
+When issuing a :
+
 REXX <some option> reset
 
-the relative values are reset to the hardcoded values or to the value provided
-by the environment variables
-
-never wrote so much doc in my whole IT life :-)
-
-if something is not clear , let me know and I will try to explain better
+The relative values are reset to the hardcoded values or to the value provided
+by the environment variables.
 
 Enrico Sorichetti
 
 
-possibly duplicate and inconsistent info, will fix later !
-to clean up the <sources> the content of
+Possibly duplicate and inconsistent info, will fix later !
+
+To clean up the <sources> the content of:
 
 hRexx_readme.txt  and hRexx_readme_install.txt
 
@@ -308,44 +325,47 @@ OLD : hRexx_readme.txt
 ********************************************************************************
 ********************************************************************************
 ********************************************************************************
-some preliminary doc for Rexx support
 
-installation/enabling
+Preliminary docs for Rexx support
+
+=== Installation / Enabling ===
 
 at configure use :
     --enable-object-rexx
     --enable-regina-rexx
 
-since support is fully dynamic no library checking is done
+Since support is fully dynamic no library checking is done
+
 I hope to have done the proper error checking
 when loading the Rexx dynamic libraries and resolving the symbols
 
-oops I forgot about windows
+ -- Windows Support --
 
-to enable REXX support on windows just
-set/export the environment variables
+To enable REXX support on windows, set/export the following environment variables
+to the appropriate directory.
+
 OBJECT_REXX_DIR
 REGINA_REXX_DIR
-to the appropriate directory
 
-if the installation was standard
-for object rexx ==> <programs files>\oorexx\api
+The default installer locations are :
 
-for REGINA rexx the silly installer wants to install
-to c:\Regina, smarter to force the install to <Program Files>\regina
-anyway the include directory is <regina install path>\include
+For Object Rexx  : <program files>\oorexx\api
 
+For REGINA rexx :  c:\Regina.
 
-when enabling multilanguange support, REXX is not <autostarted>
+The include directory is <regina install path>\include
+
+When enabling multilanguange support, REXX is not <autostarted>,
 the desired <package> must be manually started (*)
 
-the REXX command is used to manage the Rexx environment
+The REXX command is used to manage the Rexx environment.
 
 rexx start oorexx/regina
 rexx stop
 ! enable/disable are the alternative forms
 
-to tell rexx what path to use to search for the execs
+-- To tell rexx what path to use to search for the execs
+
 rexx paths < a list of paths >
 rexx paths reset to reset the search path to the default
 ( the deafult path is the current PATH )
